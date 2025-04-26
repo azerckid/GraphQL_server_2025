@@ -23,6 +23,7 @@ const typeDefs = `#graphql
     users: [User!]!
     tweets: [Tweet!]!
     tweet(id: ID!): Tweet
+    user(username: String!): User
   }
 
   type Mutation {

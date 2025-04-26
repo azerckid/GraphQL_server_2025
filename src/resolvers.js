@@ -7,6 +7,7 @@ const resolvers = {
         users: () => prisma.user.findMany(),
         tweets: () => prisma.tweet.findMany(),
         tweet: (_, { id }) => prisma.tweet.findUnique({ where: { id } }),
+        user: (_, { username }) => prisma.user.findUnique({ where: { username } }),
     },
     Mutation: {
         postTweet: async (_, { text, username, email }) => {
