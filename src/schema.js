@@ -13,16 +13,26 @@ const typeDefs = `#graphql
     createdAt: String!
   }
 
+  type AuthPayload {
+    token: String!
+    user: User!
+  }
+
   type Query {
     me: User
+    users: [User!]!
     tweets: [Tweet!]!
     tweet(id: ID!): Tweet
   }
 
   type Mutation {
-    postTweet(text: String!): Tweet!
+    login(username: String!, password: String!): AuthPayload!
+    postTweet(text: String!, username: String!, email: String!): Tweet!
     deleteTweet(id: ID!): Boolean!
+    updateUser(id: ID!, username: String, email: String): User!
   }
+
+  scalar DateTime
 `;
 
 module.exports = typeDefs;

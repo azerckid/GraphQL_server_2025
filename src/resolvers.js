@@ -1,33 +1,66 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
 const resolvers = {
     Query: {
-        me: () => null,
-        tweets: () => [],
-        tweet: (_, { id }) => null,
+        me: () => prisma.user.findFirst(),
+        users: () => prisma.user.findMany(),
+        tweets: () => prisma.tweet.findMany(),
+        tweet: (_, { id }) => prisma.tweet.findUnique({ where: { id } }),
     },
     Mutation: {
-        postTweet: (_, { text }) => {
-            // 임시 데이터 반환
-            return {
-                id: "1",
-                text,
-                author: {
-                    id: "1",
-                    username: "test",
-                    email: "test@test.com",
-                },
-                createdAt: new Date().toISOString(),
-            };
+        postTweet: async (_, { text, username, email }) => {
+            // Find or create user
+            let user = await prisma.user.findUnique({
+                where: { username }
+            });
+
+            if (!user) {
+                user = await prisma.user.create({
+                    data: {
+                        username,
+                        email
+                    }
+                });
+            }
+
+            // Create tweet
+            return prisma.tweet.create({
+                data: {
+                    text,
+                    author: {
+                        connect: { id: user.id }
+                    }
+                }
+            });
         },
-        deleteTweet: (_, { id }) => true,
+        deleteTweet: async (_, { id }) => {
+            try {
+                await prisma.tweet.delete({ where: { id } });
+                return true;
+            } catch (error) {
+                return false;
+            }
+        },
+        updateUser: async (_, { id, username, email }) => {
+            const updateData = {};
+            if (username) updateData.username = username;
+            if (email) updateData.email = email;
+
+            return prisma.user.update({
+                where: { id },
+                data: updateData,
+            });
+        },
     },
     User: {
-        tweets: (parent) => [],
+        tweets: (parent) => prisma.tweet.findMany({
+            where: { authorId: parent.id }
+        }),
     },
     Tweet: {
-        author: (parent) => ({
-            id: "1",
-            username: "test",
-            email: "test@test.com",
+        author: (parent) => prisma.user.findUnique({
+            where: { id: parent.authorId }
         }),
     },
 };
