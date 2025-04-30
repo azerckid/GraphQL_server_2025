@@ -1,7 +1,7 @@
-const { ApolloServer } = require("@apollo/server");
-const { startStandaloneServer } = require("@apollo/server/standalone");
-const typeDefs = require("./typeDefs");
-const resolvers = require("./resolvers");
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import typeDefs from "./typeDefs.js";
+import resolvers from "./resolvers.js";
 
 async function startServer() {
     const server = new ApolloServer({

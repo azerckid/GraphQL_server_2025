@@ -1,11 +1,17 @@
 const typeDefs = `#graphql
+  """
+  this is for localhost:4000/
+  A user is a person who can post tweets
+  """
   type User {
     id: ID!
     username: String!
     email: String!
     tweets: [Tweet!]
   }
-
+  """
+  A tweet is a message posted by a user
+  """ 
   type Tweet {
     id: ID!
     text: String!
@@ -19,10 +25,25 @@ const typeDefs = `#graphql
   }
 
   type Query {
+    """
+    Get the current user
+    """
     me: User
+    """
+    Get all users
+    """
     users: [User!]!
+    """
+    Get all tweets
+    """
     tweets: [Tweet!]!
+    """
+    Get a tweet by id
+    """
     tweet(id: ID!): Tweet
+    """
+    Get a user by username
+    """
     user(username: String!): User
   }
 
@@ -36,4 +57,4 @@ const typeDefs = `#graphql
   scalar DateTime
 `;
 
-module.exports = typeDefs;
+export default typeDefs;
